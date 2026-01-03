@@ -1,0 +1,38 @@
+
+:root {
+  font-family: ubuntu;
+  font-size: 16px;
+}
+form {
+  display: flex;
+  flex-direction: column;
+  label {
+    font-weight: bold;
+    font-size: 0.8rem;
+    color: #333;
+  }
+  input {
+    font-size: 1rem;
+    padding: 0.25rem;
+    border: 1px solid #888;
+    border-radius: 0.25rem;
+    &:focus {
+      outline: none;
+      background-color: #eef;
+    }
+  }
+  div {
+    padding-left: 1rem;
+    background-color: #eee;
+    display: flex;
+    flex-direction: column;
+  }
+  ul {
+    list-style-type: none;
+    padding-left: 1rem;
+    li {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+}

@@ -1,0 +1,47 @@
+{% macro field(path, prop, name, value, li) -%}
+{% set fullname = path + name %}
+{% if prop.title and not li %}
+<label for='{{fullname}}'> {{ prop.title }} </label>
+{% endif %}
+{% if prop.type == 'string' %}
+<input type='text' name='{{fullname}}' value='{{value}}' />
+{% elif prop.type == 'number' %}
+<input type='number' name='{{fullname}}' value='{{value}}' />
+{% elif prop.type == 'object' %}
+{% if not li %}
+<div class='object {{ name }}'>
+{% endif %}
+{% set fullpath = path + name + "." %}
+{% for name, prop in prop.properties.items() %}
+{{ field(fullpath, prop, name, value[name], False) }}
+{% endfor %}
+{% if not li %}
+</div>
+{% endif %}
+{% elif prop.type == 'array' %}
+<div class="array {{ name }}">
+<ul>
+  {% for item in value %}
+  <li>
+    {% set index_name = name ~ "[" ~ loop.index0 ~ "]" %}
+    {{ field(path, prop['items'], index_name, item, True) }}
+    <button name="delete" value="{{ path ~ index_name }}">delete</button>
+  </li>
+  {% endfor %}
+  <li>
+    {% set index_name = name ~ "[" ~ (value|length) ~ "]" %}
+    {{ field(path, prop['items'], index_name, "", True) }}
+  </li>
+</ul>
+</div>
+{% else %}
+<p> unknown type: {{ prop }} </p>
+{% endif %}
+{%- endmacro %}
+<form class='{{ schema.title.lower() }}' method="post" action='{{ href }}'>
+  <h1> {{ schema.title }} </h1>
+  {% for name, prop in schema.properties.items() %}
+  {{ field("", prop, name, value[name], False) }}
+  {% endfor %}
+  <input type='submit' value='submit'></input>
+</form>
