@@ -23,6 +23,12 @@ form {
     padding: 0 0.5rem;
   }
   .tags {
+    ul {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
     input {
       field-sizing: content;
       min-width: 50px;
