@@ -18,22 +18,24 @@
 {% if not li %}
 {% endif %}
 {% elif prop.type == 'array' %}
+<button class='add' name='add' value="{{ fullname }}"></button>
 <ul>
+  {% if value is not none %}
   {% for item in value %}
   <li>
     {% set index_name = name ~ "[" ~ loop.index0 ~ "]" %}
-    {{ field(path, prop['items'], index_name, item, True) }}
+    {{ field(path, prop.get('items'), index_name, item, True) }}
     <button class="delete" name="delete" value="{{ path ~ index_name }}">
     </button>
   </li>
   {% endfor %}
-  <li>
-    {% set index_name = name ~ "[" ~ (value|length) ~ "]" %}
-    {{ field(path, prop['items'], index_name, "", True) }}
-  </li>
+  {% endif %}
 </ul>
 {% else %}
 <p> unknown type: {{ prop }} </p>
+{% endif %}
+{% if errors.get(fullname) %}
+<span class='error' path="{{fullname}}"> {{ errors.get(fullname) }} </span>
 {% endif %}
 </div>
 {%- endmacro %}

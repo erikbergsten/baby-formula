@@ -38,12 +38,22 @@ form {
     ul {
     }
   }
-  .delete {
+  button {
     border: none;
     background-color: transparent;
     &::before {
       cursor: pointer;
-      content: "🗙";
     }
+  }
+  .delete::before {
+    content: "🗙";
+  }
+  .add::before {
+    content: "+";
+  }
+  .error {
+    color: red;
+    font-weight: bold;
+    font-size: 0.8rem;
   }
 }
