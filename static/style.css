@@ -1,38 +1,43 @@
 
 :root {
-  font-family: ubuntu;
+  font-family: arial;
   font-size: 16px;
 }
 form {
-  display: flex;
-  flex-direction: column;
   label {
-    font-weight: bold;
     font-size: 0.8rem;
+    font-weight: bold;
     color: #333;
-  }
-  input {
-    font-size: 1rem;
-    padding: 0.25rem;
-    border: 1px solid #888;
-    border-radius: 0.25rem;
-    &:focus {
-      outline: none;
-      background-color: #eef;
-    }
-  }
-  div {
-    padding-left: 1rem;
-    background-color: #eee;
-    display: flex;
-    flex-direction: column;
   }
   ul {
     list-style-type: none;
-    padding-left: 1rem;
-    li {
-      display: flex;
-      flex-direction: column;
+    margin: 0;
+    padding: 0;
+  }
+  li {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+  .array, .object {
+    padding: 0 0.5rem;
+  }
+  .tags {
+    input {
+      field-sizing: content;
+      min-width: 50px;
+    }
+  }
+  .items {
+    ul {
+    }
+  }
+  .delete {
+    border: none;
+    background-color: transparent;
+    &::before {
+      cursor: pointer;
+      content: "🗙";
     }
   }
 }
