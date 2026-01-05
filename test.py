@@ -22,7 +22,7 @@ async def root(request: Request):
 
 @app.post("/")
 async def post_root(request: Request):
-    form, action = await Form.from_request(Receipt, request)
+    form, action = await Form.from_request(Receipt, request, add="+", delete="-")
     if action == "delete":
         print("user deleted?")
     elif action == "submit":

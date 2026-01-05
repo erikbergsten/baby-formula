@@ -1,58 +1,58 @@
-{% macro error(errors, path) %}
-{% if errors.get(path) %}
-<span class='error'> {{ errors.get(path) }} </span>
+{% macro error(form, path) %}
+{% if form.errors.get(path) %}
+<span class='error'> {{ form.errors.get(path) }} </span>
 {% endif %}
 {% endmacro %}
 
-{% macro single(type, path, name, value, tag, errors) -%}
+{% macro single(type, path, name, value, tag, form) -%}
 <input name="{{path}}" type='{{type}}' value="{{value}}">
 {%- endmacro %}
 
-{% macro text(path, name, value, errors) -%}
-{{ single("text", path, name, value, errors) }}
+{% macro text(path, name, value, form) -%}
+{{ single("text", path, name, value, form) }}
 {%- endmacro %}
 
-{% macro number(path, name, value, errors) -%}
-{{ single("number", path, name, value, errors) }}
+{% macro number(path, name, value, form) -%}
+{{ single("number", path, name, value, form) }}
 {%- endmacro %}
 
-{% macro object_items(path, name, schema, value, sep, errors) -%}
+{% macro object_items(path, name, schema, value, sep, form) -%}
 {% for name, schema in schema.properties.items() %}
 {% set fullpath = path + sep + name %}
 <div class="{{schema.type}} {{name}}">
 <label for="{{fullpath}}"> {{ name }} </label>
-{{ field(fullpath, name, schema, value[name], errors) }}
-{{ error(errors, fullpath) }}
+{{ field(fullpath, name, schema, value[name], form) }}
+{{ error(form, fullpath) }}
 </div>
 {% endfor %}
 {%- endmacro %}
 
-{% macro object(path, name, schema, value, errors) -%}
-{{ object_items(path, name, schema, value, ".", errors) }}
+{% macro object(path, name, schema, value, form) -%}
+{{ object_items(path, name, schema, value, ".", form) }}
 {%- endmacro %}
 
-{% macro array(path, name, schema, value, errors) -%}
-<button class="add" name="add" value="{{path}}"> [add] </button>
+{% macro array(path, name, schema, value, form) -%}
+<button class="add" name="add" value="{{path}}"> {{ form.add_button }} </button>
 <ul>
 {% for i in value %}
 <li>
 {% set fullpath = path ~ "[" ~ loop.index0 ~ "]" %}
-{{ field(fullpath, name, schema.get('items'), i, errors) }}
-{{ error(errors, fullpath) }}
-<button class="delete" name="delete" value="{{fullpath}}"> [delete] </button>
+{{ field(fullpath, name, schema.get('items'), i, form) }}
+{{ error(form, fullpath) }}
+<button class="delete" name="delete" value="{{fullpath}}"> {{ form.delete_button }} </button>
 </li>
 {% endfor %}
 </ul>
 {%- endmacro %}
 
-{% macro field(path, name, schema, value, errors) -%}
+{% macro field(path, name, schema, value, form) -%}
 {% if schema.type == "object" %}
-{{ object(path, name, schema, value, errors) }}
+{{ object(path, name, schema, value, form) }}
 {% elif schema.type == "array" %}
-{{ array(path, name, schema, value, errors) }}
+{{ array(path, name, schema, value, form) }}
 {% elif schema.type == "string" %}
-{{ single("text", path, name, value, errors) }}
+{{ single("text", path, name, value, form) }}
 {% elif schema.type == "number" %}
-{{ single("number", path, name, value, errors) }}
+{{ single("number", path, name, value, form) }}
 {% endif %}
 {%- endmacro %}

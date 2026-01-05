@@ -28,22 +28,26 @@ def path_from_validation_error_location(loc):
     return res
 
 class Form:
-    def __init__(self, dataclass, state={}):
+    def __init__(self, dataclass, state={}, add="add", delete="delete"):
         self.dataclass = dataclass
+        self.schema = self.dataclass.model_json_schema()
+        self.deref_schema = replace_refs(self.schema)
         self.state = state
         self.errors = {}
         self.value = None
+        self.add_button = add
+        self.delete_button = delete
 
-    def from_request_body(dataclass, body):
+    def from_request_body(dataclass, body, **kwargs):
         state = {}
         for key, value in body.multi_items():
             path = parse(key)
             path.update_or_create(state, value)
-        return Form(dataclass, state)
+        return Form(dataclass, state, **kwargs)
 
-    async def from_request(dataclass, request):
+    async def from_request(dataclass, request, **kwargs):
         request_body = await request.form()
-        form = Form.from_request_body(Receipt, request_body)
+        form = Form.from_request_body(Receipt, request_body, **kwargs)
 
         if request_body.get("delete"):
             path = request_body["delete"]
@@ -81,14 +85,10 @@ class Form:
         expr.update_or_create(self.state, value)
 
     def render(self, href):
-        schema = self.dataclass.model_json_schema()
-        deref_schema = replace_refs(schema)
         print("rendering value:", self.state)
         return tpl.form.render(
-                schema=deref_schema,
-                value=self.state,
-                href=href,
-                errors=self.errors)
+                form=self,
+                href=href)
 
 class Receipt(BaseModel):
     store: Annotated[str, Field(min_length=1)]
