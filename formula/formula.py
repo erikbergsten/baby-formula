@@ -3,15 +3,11 @@ from typing import Annotated
 from jsonpath_ng import parse
 from datetime import datetime
 import io
-from jinja2 import Environment, PackageLoader, select_autoescape
 from jsonref import replace_refs
-
-
-env = Environment(loader=PackageLoader("formula"), autoescape=select_autoescape())
-form_tpl = env.get_template("form.html")
+from . import tpl
 
 class Item(BaseModel):
-    name: str
+    name: Annotated[str, Field(min_length=1)]
     price: float
 
 class Metadata(BaseModel):
@@ -88,7 +84,7 @@ class Form:
         schema = self.dataclass.model_json_schema()
         deref_schema = replace_refs(schema)
         print("rendering value:", self.state)
-        return form_tpl.render(
+        return tpl.form.render(
                 schema=deref_schema,
                 value=self.state,
                 href=href,

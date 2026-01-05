@@ -1,0 +1,58 @@
+{% macro error(errors, path) %}
+{% if errors.get(path) %}
+<span class='error'> {{ errors.get(path) }} </span>
+{% endif %}
+{% endmacro %}
+
+{% macro single(type, path, name, value, tag, errors) -%}
+<input name="{{path}}" type='{{type}}' value="{{value}}">
+{%- endmacro %}
+
+{% macro text(path, name, value, errors) -%}
+{{ single("text", path, name, value, errors) }}
+{%- endmacro %}
+
+{% macro number(path, name, value, errors) -%}
+{{ single("number", path, name, value, errors) }}
+{%- endmacro %}
+
+{% macro object_items(path, name, schema, value, sep, errors) -%}
+{% for name, schema in schema.properties.items() %}
+{% set fullpath = path + sep + name %}
+<div class="{{schema.type}} {{name}}">
+<label for="{{fullpath}}"> {{ name }} </label>
+{{ field(fullpath, name, schema, value[name], errors) }}
+{{ error(errors, fullpath) }}
+</div>
+{% endfor %}
+{%- endmacro %}
+
+{% macro object(path, name, schema, value, errors) -%}
+{{ object_items(path, name, schema, value, ".", errors) }}
+{%- endmacro %}
+
+{% macro array(path, name, schema, value, errors) -%}
+<button class="add" name="add" value="{{path}}"> [add] </button>
+<ul>
+{% for i in value %}
+<li>
+{% set fullpath = path ~ "[" ~ loop.index0 ~ "]" %}
+{{ field(fullpath, name, schema.get('items'), i, errors) }}
+{{ error(errors, fullpath) }}
+<button class="delete" name="delete" value="{{fullpath}}"> [delete] </button>
+</li>
+{% endfor %}
+</ul>
+{%- endmacro %}
+
+{% macro field(path, name, schema, value, errors) -%}
+{% if schema.type == "object" %}
+{{ object(path, name, schema, value, errors) }}
+{% elif schema.type == "array" %}
+{{ array(path, name, schema, value, errors) }}
+{% elif schema.type == "string" %}
+{{ single("text", path, name, value, errors) }}
+{% elif schema.type == "number" %}
+{{ single("number", path, name, value, errors) }}
+{% endif %}
+{%- endmacro %}

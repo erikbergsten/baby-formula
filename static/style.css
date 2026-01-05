@@ -4,52 +4,75 @@
   font-size: 16px;
 }
 form {
+  display: flex;
+  flex-direction: column;
+  width: 480px;
   label {
+    min-width: 10rem;
     font-size: 0.8rem;
     font-weight: bold;
     color: #333;
+  }
+  .string, .number {
+    display: flex;
+    flex-direction: column;
+    label {
+    }
   }
   ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
   }
-  li {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-  }
-  .array, .object {
-    padding: 0 0.5rem;
+  .object, .array {
+    div {
+      margin-left: 1rem;
+    }
   }
   .tags {
     ul {
       display: flex;
       flex-direction: row;
       flex-wrap: wrap;
-      gap: 0.5rem;
-    }
-    input {
-      field-sizing: content;
-      min-width: 50px;
+      gap: 1rem;
+      li {
+          background-color: #cfc;
+          border-radius: 0.5rem;
+        input {
+          border-radius: 0.5rem;
+          background-color: #cfc;
+          field-sizing: content;
+          min-width: 1rem;
+          border: none;
+          padding: 0.5rem;
+        }
+      }
     }
   }
+
   .items {
     ul {
+      li {
+        display: flex;
+        flex-direction: column;
+        button {
+          align-self: end;
+        }
+      }
     }
   }
+
+
   button {
     border: none;
     background-color: transparent;
-    &::before {
-      cursor: pointer;
+    cursor: pointer;
+    &.add {
+      color: blue;
     }
-  }
-  .delete::before {
-    content: "🗙";
-  }
-  .add::before {
-    content: "+";
+    &.delete {
+      color: red;
+    }
   }
   .error {
     color: red;
