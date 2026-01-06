@@ -5,7 +5,12 @@
 {% endmacro %}
 
 {% macro single(type, path, name, value, tag, form) -%}
-<input name="{{path}}" type='{{type}}' value="{{value}}">
+<input
+  name="{{path}}" type='{{type}}'
+  {% if value is not none %}
+    value="{{value}}"
+  {% endif %}
+>
 {%- endmacro %}
 
 {% macro text(path, name, value, form) -%}
@@ -21,7 +26,11 @@
 {% set fullpath = path + sep + name %}
 <div class="{{schema.type}} {{name}}">
 <label for="{{fullpath}}"> {{ name }} </label>
-{{ field(fullpath, name, schema, value[name], form) }}
+{% if value is not none %}
+{{ field(fullpath, name, schema, value.get(name), form) }}
+{% else %}
+{{ field(fullpath, name, schema, None, form) }}
+{% endif %}
 {{ error(form, fullpath) }}
 </div>
 {% endfor %}
@@ -34,6 +43,7 @@
 {% macro array(path, name, schema, value, form) -%}
 <button class="add" name="add" value="{{path}}"> {{ form.add_button }} </button>
 <ul>
+{% if value is not none %}
 {% for i in value %}
 <li>
 {% set fullpath = path ~ "[" ~ loop.index0 ~ "]" %}
@@ -42,6 +52,7 @@
 <button class="delete" name="delete" value="{{fullpath}}"> {{ form.delete_button }} </button>
 </li>
 {% endfor %}
+{% endif %}
 </ul>
 {%- endmacro %}
 

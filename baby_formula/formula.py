@@ -6,15 +6,6 @@ import io
 from jsonref import replace_refs
 from . import tpl
 
-class Item(BaseModel):
-    name: Annotated[str, Field(min_length=1)]
-    price: float
-
-class Metadata(BaseModel):
-    category: str
-    total: float
-    tags: list[Annotated[str, Field(min_length=1)]] = []
-
 def always(x):
     return True
 
@@ -47,7 +38,7 @@ class Form:
 
     async def from_request(dataclass, request, **kwargs):
         request_body = await request.form()
-        form = Form.from_request_body(Receipt, request_body, **kwargs)
+        form = Form.from_request_body(dataclass, request_body, **kwargs)
 
         if request_body.get("delete"):
             path = request_body["delete"]
@@ -81,7 +72,7 @@ class Form:
         value = []
         if len(values) > 0:
             value = values[0].value
-        value.append("")
+        value.append(None)
         expr.update_or_create(self.state, value)
 
     def render(self, href):
@@ -89,32 +80,3 @@ class Form:
         return tpl.form.render(
                 form=self,
                 href=href)
-
-class Receipt(BaseModel):
-    store: Annotated[str, Field(min_length=1)]
-    date: datetime
-    metadata: Metadata
-    items: list[Item] = []
-
-def empty(value):
-    if isinstance(value, str):
-        return value == ""
-    elif isinstance(value, dict):
-        # check all values
-        for v in value.values():
-            if not empty(value):
-                return False
-        return True
-    elif isinstance(value, list):
-        for v in value:
-            if not empty(value):
-                return False
-        return True
-
-metadata=Metadata(category="food", total=13.37, tags=["groceries", "expense"])
-items=[
-    Item(name="foo", price=12.3),
-    Item(name="bar", price=32.1),
-]
-receipt = Receipt(store="ica", date="2025-01-01",  metadata=metadata, items=items)
-f = Form(Receipt, state=receipt.model_dump())

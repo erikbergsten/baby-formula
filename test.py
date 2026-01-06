@@ -1,16 +1,18 @@
-from fastapi import FastAPI, Form, Request
+from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from typing import Annotated
 from datetime import datetime
 
-from formula.formula import Form, Receipt, f
+from baby_formula import Form
+from form_test import Receipt, receipt
 from fastapi.templating import Jinja2Templates
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 templates = Jinja2Templates(directory="templates")
+f = Form(Receipt, state=Receipt().model_dump())
 
 @app.get("/")
 async def root(request: Request):
